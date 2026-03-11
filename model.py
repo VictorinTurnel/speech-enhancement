@@ -6,10 +6,11 @@ class DownConv1d(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size=31, stride=2, padding=15):
         super().__init__()
         self.conv = nn.Conv1d(in_channels, out_channels, kernel_size, stride, padding)
+        self.norm = nn.InstanceNorm1d(out_channels)
         self.prelu = nn.PReLU(out_channels)
 
     def forward(self, x):
-        return self.prelu(self.conv(x))
+        return self.prelu(self.norm(self.conv(x)))
     
 
 class UpConv1d(nn.Module):
@@ -17,10 +18,11 @@ class UpConv1d(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size=31, stride=2, padding=15):
         super().__init__()
         self.convt = nn.ConvTranspose1d(in_channels, out_channels, kernel_size, stride, padding, output_padding=1)
+        self.norm = nn.InstanceNorm1d(out_channels)
         self.prelu = nn.PReLU(out_channels)
 
     def forward(self,x):
-        return self.prelu(self.convt(x))
+        return self.prelu(self.norm(self.convt(x)))
     
 
 class DenoiserModel(nn.Module):
